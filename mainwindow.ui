@@ -1456,6 +1456,81 @@ color: rgb(255, 255, 255);
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="outline">
+     <attribute name="title">
+      <string>大纲</string>
+     </attribute>
+     <widget class="QTreeView" name="treeView">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>761</width>
+        <height>631</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(80, 97, 138);
+border-radius:15px;
+color: rgb(255, 255, 255);
+</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnAddOutline">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>93</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(162, 181, 205);
+color: rgb(255, 255, 255);
+border: 0px groove gary;
+border-radius:5px;
+selection-background-color: rgb(170, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>新增</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../../添加_ 通信_ 文件_ 文件_ 新的_ 加号图标(Add_ -ico_爱给网_aigei_com.ico</normaloff>../../添加_ 通信_ 文件_ 文件_ 新的_ 加号图标(Add_ -ico_爱给网_aigei_com.ico</iconset>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnDeletePartyConnection_2">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>10</y>
+        <width>93</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(162, 181, 205);
+color: rgb(255, 255, 255);
+border: 0px groove gary;
+border-radius:5px;
+selection-background-color: rgb(170, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>删除</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../../删除_ 取消_ 关闭_ 十字架_ 文件_ 减_ 删除图标(D-ico_爱给网_aigei_com.ico</normaloff>../../删除_ 取消_ 关闭_ 十字架_ 文件_ 减_ 删除图标(D-ico_爱给网_aigei_com.ico</iconset>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

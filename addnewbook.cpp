@@ -35,6 +35,7 @@ void addNewBook::addNewBookClick(){
             qDebug() << "add new book success!";
         }
     }
+    this->close();
 }
 void addNewBook::cancelClick(){
     this->close();

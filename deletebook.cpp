@@ -30,9 +30,15 @@ QString deleteBook::getDeleteBookName(){
 void deleteBook::deleteClick(){
     QString path = QCoreApplication::applicationDirPath()+"/"+deleteName+".db";
     QFile file(path);
+    QFile::setPermissions(path,QFile::ReadOther | QFile::WriteOther);
     if(file.exists()){
         file.remove();
-        qDebug() << "remove success!";
+        if(!file.exists()){
+            qDebug() << "remove success!";
+        }
+        else{
+            qDebug() << "remove failed!";
+        }
     }
     else{
         qDebug() << "book don't exists!";

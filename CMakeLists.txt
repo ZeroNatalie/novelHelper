@@ -41,6 +41,9 @@ set(PROJECT_SOURCES
         deletebook.h deletebook.cpp deletebook.ui
         addnewconnecion.h addnewconnecion.cpp addnewconnecion.ui
         util.h util.cpp
+        message.h message.cpp message.ui
+        importbookwindow.h importbookwindow.cpp importbookwindow.ui
+        addnewoutlinewindow.h addnewoutlinewindow.cpp addnewoutlinewindow.ui
         #timeAxis.h
         #timeAxis.cpp
         ${TS_FILES}

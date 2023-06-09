@@ -7,7 +7,7 @@ class Util
 {
 public:
     Util();
-    QStringList getBookNameList(QDir dirPath);
+    static QStringList getBookNameList(QDir dirPath);
 };
 
 #endif // UTIL_H

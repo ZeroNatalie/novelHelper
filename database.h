@@ -9,7 +9,7 @@ typedef struct
 {
     QString name;
     QString describe;
-    QString connection;
+    QString note;
 }w2dba;
 
 class SqliteOperator
@@ -33,7 +33,7 @@ public:
     void singleInsertData(QString tableName,w2dba &singleData); // 插入单条数据
     void moreInsertData(QString tableName,QList<w2dba> &moreData); // 插入多条数据
     // 修改数据
-    void modifyData(QString tableName,QString name, QString describe,QString connection);
+    void modifyData(QString tableName,QString oldName,QString newName, QString describe,QString note);
     // 删除数据
     void deleteData(QString tableName,QString name);
     //删除数据表

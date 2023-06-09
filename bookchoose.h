@@ -20,6 +20,7 @@ public:
     void init();
     void bookListInit();
     QString bookIndex;
+    void keyPressEvent(QKeyEvent *e);
 private:
     Ui::BookChoose *ui;
 private slots:

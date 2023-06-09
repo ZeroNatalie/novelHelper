@@ -4,7 +4,10 @@
 #include "mainwindow.h"
 #include "addnewbook.h"
 #include "deletebook.h"
+#include "importbookwindow.h"
 #include "util.h"
+#include "QKeyEvent"
+#include "message.h"
 Book::Book(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::BookChoose)
@@ -17,8 +20,12 @@ Book::~Book()
 {
     delete ui;
 }
-
-void Book::init(){
+void Book::keyPressEvent(QKeyEvent *e){
+    if(e->key()==Qt::Key_R){
+        bookListInit();
+    }
+}
+void Book::init(){   
     ui->btnChooseBook->setEnabled(false);
     ui->btnDeleteBook->setEnabled(false);
     connect(ui->btnChooseBook,SIGNAL(clicked()),this,SLOT(ChooseBook()));
@@ -30,6 +37,7 @@ void Book::init(){
     this->setWindowTitle("作品选择");
 }
 void Book::bookListInit(){
+    ui->bookList->clear();
     QStringList bookList = Util::getBookNameList(QCoreApplication::applicationDirPath());
     //QListWidget *bookList = new QListWidget;
     //ui->bookList->resize(365,400);
@@ -73,6 +81,7 @@ void Book::setBtnAvailable(){
 }
 void Book::setBookIndex(QModelIndex index){
     this->bookIndex = index.data().toString();
+    qDebug() << bookIndex << "is choosed.";
 }
 void Book::backup(){
     QString currentPath = QCoreApplication::applicationDirPath();
@@ -87,10 +96,15 @@ void Book::backup(){
     QString filename = this->bookIndex+".db";
     bool backupOk = QFile::copy(currentPath+"/"+filename,backupPath+"/"+filename);
     if(backupOk == 1){
-        qDebug() << "backup success!";
+        QString sum = "备份成功!";
+        Message m(sum);
+        m.exec();
     }
     else{
-        qDebug() << "backup error!";
+        QString fam = "备份失败!";
+        Message m(fam);
+        m.exec();
+        //qDebug() << "backup error!";
     }
 }
 
@@ -107,5 +121,6 @@ void Book::on_btnDeleteBook_clicked()
 }
 
 void Book::importBook(){
-
+    importBookWindow *i = new importBookWindow;
+    i->show();
 }

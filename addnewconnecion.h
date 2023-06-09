@@ -7,13 +7,13 @@ namespace Ui {
 class addNewConnecion;
 }
 
-class addNewConnecion : public QDialog
+class addNewConnectionWindow : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit addNewConnecion(QString bookName,QWidget *parent = nullptr);
-    ~addNewConnecion();
+    explicit addNewConnectionWindow(QString bookName,QWidget *parent = nullptr);
+    ~addNewConnectionWindow();
     void setSelectedName(QString);
     void setSelectedType(QString);
     void init();

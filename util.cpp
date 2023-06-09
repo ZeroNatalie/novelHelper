@@ -1,7 +1,6 @@
 #include "util.h"
 
 Util::Util(){}
-
 QStringList Util::getBookNameList(QDir dirPath){
     QDir dir(dirPath);
     QStringList bookName;

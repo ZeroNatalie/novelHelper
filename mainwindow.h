@@ -30,12 +30,15 @@ public:
      QString ChoosenPeopleIndex;
      QString ChoosenPartyIndex;
      QString ChoosenEventIndex;
+     //QStandardItemModel* m_standardItemModel;
      QStringListModel *peopleModel;
      QStringListModel *partyModel;
      QStringListModel *eventModel;
      //QSqlTableModel *connectionModel;
      void init();
     SqliteOperator *sqls;
+    void initTree();
+    void keyPressEvent(QKeyEvent *e);
  private slots:
      void showPeopleClick(QModelIndex index);
      void showPeopleConnection(QModelIndex index);
@@ -52,5 +55,8 @@ public:
      void on_btnDeleteEvent_clicked();
      void on_btnUpdatePeople_clicked();
      void addNewConnection();
+     void addNewOutline();
+//     void showOutlineClicked(QModelIndex index);
+//     void on_btnAddPeopleConnection_2_clicked();
 };
 #endif // MAINWINDOW_H

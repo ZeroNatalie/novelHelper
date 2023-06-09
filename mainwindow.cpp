@@ -7,14 +7,16 @@
 #include "addneweventwindow.h"
 #include "updatepeoplewindow.h"
 #include "addnewconnecion.h"
-
+#include "QKeyEvent"
+#include "addnewoutlinewindow.h"
 
 MainWindow::MainWindow(QString bookName,QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent),
+      bookName(bookName),
+     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setBookName(bookName);
+    //setBookName(bookName);
     this->setWindowTitle(bookName);
     sqls = new SqliteOperator(bookName);
     init();
@@ -22,11 +24,15 @@ MainWindow::MainWindow(QString bookName,QWidget *parent)
 void MainWindow::setBookName(QString bn){
     bookName = bn;
 }
+void MainWindow::keyPressEvent(QKeyEvent *e){
+    if(e->key()==Qt::Key_R){
+        refreshList();
+    }
+}
 void MainWindow::init()
 {
 
     //创建并打开SQLite数据库
-    //SqliteOperator sqls(bookName);
     sqls->openDb();
     QString peo = "people";
     QString par = "party";
@@ -76,6 +82,18 @@ void MainWindow::init()
                                         QTableView{border: 0px groove gary;border-radius:5px;}\
                                         QTableCornerButton::section{background-color:rgb(162,181,205)}");
 
+//    QStringList hder;
+//    hder << "章节" << "内容";
+//    m_standardItemModel->setHorizontalHeaderLabels(hder);
+
+//    // TreeView控件载入model
+//    ui->treeView->setModel(m_standardItemModel);
+//    ui->treeView->setStyleSheet("QHeaderView::section{background-color:rgb(162,181,205)}\
+//                                QTreeView::item{color:white}");
+//    // 展开数据
+//    ui->treeView->expandAll();
+
+    initTree();
     //connect
     connect(ui->listView_people,SIGNAL(clicked(QModelIndex)),this,SLOT(showPeopleClick(QModelIndex)));
     connect(ui->listView_people,SIGNAL(clicked(QModelIndex)),this,SLOT(showPeopleConnection(QModelIndex)));
@@ -85,30 +103,82 @@ void MainWindow::init()
     connect(ui->btnDeletePeople,SIGNAL(clicked()),this,SLOT(deletePeopleClick()));
     connect(ui->btnExit,SIGNAL(clicked()),this,SLOT(exitClick()));
     connect(ui->btnAddPeopleConnection,SIGNAL(clicked()),this,SLOT(addNewConnection()));
-    /*
-    ItemModel = new QStandardItemModel(this);
-    QStringList strList;
-    strList.append("A");
-    int nCount = strList.size();
-    for(int i = 0; i < nCount; i++)
-    {
-        QString string = static_cast<QString>(strList.at(i));
-        QStandardItem *item = new QStandardItem(string);
-        ItemModel->appendRow(item);
-    }
-    ui->listView_people->setModel(ItemModel);
-    ui->listView_people->setFixedSize(200,400);
-    connect(ui->listView_people,SIGNAL(clicked(QModelIndex)),this,SLOT(showClick(QModelIndex)));
-    */
- }
+    connect(ui->btnAddOutline,SIGNAL(clicked()),this,SLOT(addNewOutline()));
+//    connect(ui->treeView,SIGNAL(clicked(QModelIndex)),this,SLOT(showOutlineClicked(QModelIndex)));
 
+ }
+void MainWindow::initTree(){
+    // 初始化model
+    QStandardItemModel* m_standardItemModel = new QStandardItemModel();
+    m_standardItemModel->setColumnCount(2);
+    // 使用model设置QTreeView表头
+//    QStringList hder;
+//    hder << "章节" << "内容";
+//    m_standardItemModel->setHorizontalHeaderLabels(hder);
+    m_standardItemModel->setHeaderData(0,Qt::Horizontal,"章节");
+    m_standardItemModel->setHeaderData(1,Qt::Horizontal,"内容");
+
+    // TreeView控件载入model
+    ui->treeView->setModel(m_standardItemModel);
+    ui->treeView->setStyleSheet("QHeaderView::section{background-color:rgb(162,181,205)}\
+                                QTreeView::item{color:white}");
+    // 展开数据
+    ui->treeView->expandAll();
+
+    // 创建根节点，抽象Item，并没有实际数据
+    QStandardItem* itemRoot = m_standardItemModel->invisibleRootItem();
+
+    // 创建并添加Item的第一个子节点
+    //QStringList it1;
+    //it1 << "第一卷" << "第一卷的内容";
+    QStandardItem* itemCam = new QStandardItem(QStringLiteral("第一卷"));
+    QStandardItem* item2 = new QStandardItem(QStringLiteral("第一卷的内容是故事的引子，讲述班级里出现了一起诡异的案件"));
+    //itemRoot->appendRow(itemCam);
+    m_standardItemModel->setItem(0,0,itemCam);
+    m_standardItemModel->setItem(0,1,item2);
+
+    // 向第一个子节点itemCam添加子节点数据
+    QStandardItem* itemc1 = new QStandardItem("章节一");
+    itemCam->appendRow(itemc1);
+    QStandardItem* itemd1 = new QStandardItem("第一章的内容是：某一天下课后几人在班级里闲聊，讨论新转校生");
+    itemCam->setChild(0,1,itemd1);
+    QStandardItem* itemc2 = new QStandardItem("章节二");
+    itemCam->appendRow(itemc2);
+    QStandardItem* itemd2 = new QStandardItem("第二章的内容是：这天放学以后，班主任忽然让所有人留下接受调查……");
+    itemCam->setChild(1,1,itemd2);
+//    QList<QStandardItem*> camList;
+//    camList.append(new QStandardItem("章节一"));
+//    camList.append(new QStandardItem("章节二"));
+//    camList.append(new QStandardItem("章节三"));
+//    itemCam->appendRows(camList);
+//    // 创建并添加Item的第二个子节点
+//    QStandardItem* itemImg = new QStandardItem(QStringLiteral("第二卷"));
+//    itemRoot->appendRow(itemImg);
+
+//    // 向第二个子节点itemImg添加子节点数据
+//    QList<QStandardItem*> imgList;
+//    imgList.append(new QStandardItem("章节一"));
+//    imgList.append(new QStandardItem("章节二"));
+//    QStandardItem* ite = new QStandardItem(QStringLiteral("章节三"));
+//    imgList.append(ite);
+//    itemImg->appendRows(imgList);
+
+    QList<QStandardItem*> iteList;
+    iteList.append(new QStandardItem("小节一"));
+    iteList.append(new QStandardItem("小节二"));
+    itemc2->appendRows(iteList);
+    QStandardItem* itemd3 = new QStandardItem("小节1的内容是：在几人的闲聊中引入几位班级名人：张明娜，胡军，江飞鸟和白桦……");
+    itemc2->setChild(0,1,itemd3);
+    QStandardItem* itemd4 = new QStandardItem("小节2的内容是：引入几人的性格特点和相互关系，隐晦地介绍班级里不同寻常的氛围……");
+    itemc2->setChild(1,1,itemd4);
+}
  void MainWindow::showPeopleClick(QModelIndex index)
  {
     this->ChoosenPeopleIndex = index.data().toString();
     w2dba ans = sqls->queryData("people",this->ChoosenPeopleIndex);
     ui->peopleName->setText(ans.name);
     ui->peopleDescribe->setText(ans.describe);
-    ui->peopleNote->setText(ans.connection);
+    ui->peopleNote->setText(ans.note);
 
  }
  void MainWindow::showPeopleConnection(QModelIndex index){
@@ -132,7 +202,7 @@ void MainWindow::init()
     w2dba ans = sqls->queryData("party",this->ChoosenPartyIndex);
     ui->partyName->setText(ans.name);
     ui->partyDescribe->setText(ans.describe);
-    ui->partyNote->setText(ans.connection);
+    ui->partyNote->setText(ans.note);
  }
  void MainWindow::showEventClick(QModelIndex index)
  {
@@ -141,7 +211,7 @@ void MainWindow::init()
     w2dba ans = sqls->queryData("event",this->ChoosenEventIndex);
     ui->eventName->setText(ans.name);
     ui->eventDescribe->setText(ans.describe);
-    ui->eventNote->setText(ans.connection);
+    ui->eventNote->setText(ans.note);
  }
 
 MainWindow::~MainWindow()
@@ -206,11 +276,11 @@ void MainWindow::on_btnDeleteEvent_clicked()
 }
 void MainWindow::on_btnUpdatePeople_clicked()
 {
-    updatePeopleWindow *nw = new updatePeopleWindow(bookName);
+    QString od = ui->peopleDescribe->toPlainText();
+    QString ono = ui->peopleNote->toPlainText();
+    updatePeopleWindow *nw = new updatePeopleWindow(bookName,ChoosenPeopleIndex,od,ono);
     nw->show();
 }
-
-
 void MainWindow::addNewConnection()
 {
     QString selectedName,selectedType;
@@ -230,9 +300,51 @@ void MainWindow::addNewConnection()
         defualt:
         break;
     }
-    addNewConnecion *c = new addNewConnecion(bookName);
+    addNewConnectionWindow *c = new addNewConnectionWindow(bookName);
     c->setSelectedName(selectedName);
     c->setSelectedType(selectedType);
     c->show();
 }
+void MainWindow::addNewOutline(){
+    addNewOutlineWindow *now = new addNewOutlineWindow;
+    now->show();
 
+    QStandardItemModel* m_standardItemModel = new QStandardItemModel();
+    m_standardItemModel->setColumnCount(2);
+    m_standardItemModel->setHeaderData(0,Qt::Horizontal,"章节");
+    m_standardItemModel->setHeaderData(1,Qt::Horizontal,"内容");
+    ui->treeView->setModel(m_standardItemModel);
+    ui->treeView->setStyleSheet("QHeaderView::section{background-color:rgb(162,181,205)}\
+                                QTreeView::item{color:white}");
+    ui->treeView->expandAll();
+    QStandardItem* itemRoot = m_standardItemModel->invisibleRootItem();
+    QStandardItem* item1 = new QStandardItem(QStringLiteral("第一卷"));
+    QStandardItem* item2 = new QStandardItem(QStringLiteral("第一卷的内容"));
+    m_standardItemModel->setItem(0,0,item1);
+    m_standardItemModel->setItem(0,1,item2);
+    QStandardItem* itemc1 = new QStandardItem("章节一");
+    item1->appendRow(itemc1);
+    QStandardItem* itemd1 = new QStandardItem("第一章的内容");
+    item1->setChild(0,1,itemd1);
+    QStandardItem* itemc2 = new QStandardItem("章节二");
+    item1->appendRow(itemc2);
+    QStandardItem* itemd2 = new QStandardItem("第2章的内容");
+    item1->setChild(1,1,itemd2);
+
+    QList<QStandardItem*> iteList;
+    iteList.append(new QStandardItem("小节一"));
+    iteList.append(new QStandardItem("小节二"));
+    itemc2->appendRows(iteList);
+    QStandardItem* itemd3 = new QStandardItem("小节1的内容");
+    itemc2->setChild(0,1,itemd3);
+    QStandardItem* itemd4 = new QStandardItem("小节2的内容");
+    itemc2->setChild(1,1,itemd4);
+
+    QStandardItem* item3 = new QStandardItem(QStringLiteral("章节三"));
+    QStandardItem* item4 = new QStandardItem(QStringLiteral("章节三的内容"));
+    item1->appendRow(item3);
+    item1->setChild(2,1,item4);
+}
+//void MainWindow::showOutlineClicked(QModelIndex index){
+//    qDebug() << index.data();
+//}

@@ -68,7 +68,7 @@ void SqliteOperator::createTable(QString tableName)
     QString createSql = QString("CREATE TABLE %1 (\
                           name TEXT PRIMARY KEY NOT NULL,\
                           describe TEXT NOT NULL,\
-                          connection TEXT,\
+                          note TEXT,\
                           istop INTEGER NOT NULL)").arg(tableName);
 
     sqlQuery.prepare(createSql);
@@ -129,8 +129,8 @@ void SqliteOperator::queryTable(QString tableName)
         {
             QString name = sqlQuery.value(0).toString();
             QString describe = sqlQuery.value(1).toString();
-            QString connection = sqlQuery.value(2).toString();
-            qDebug()<<QString("query table  name:%1    describe:%2    connection:%3").arg(name).arg(describe).arg(connection);
+            QString note = sqlQuery.value(2).toString();
+            qDebug()<<QString("query table  name:%1    describe:%2    note:%3").arg(name).arg(describe).arg(note);
         }
     }
 }
@@ -168,8 +168,7 @@ w2dba SqliteOperator::queryData(QString tableName,QString n){
         while(sqlQuery.next()){
             ans.name = n;
             ans.describe = sqlQuery.value(1).toString();
-            ans.connection = sqlQuery.value(2).toString();
-//            qDebug() << "query data successs!" << QString("name:%1    describe:%2    connection:%3").arg(ans.name).arg(ans.describe).arg(ans.connection);
+            ans.note = sqlQuery.value(2).toString();
         }
     }
     return ans;
@@ -196,11 +195,11 @@ w2dba SqliteOperator::queryData(QString tableName,QString n){
 void SqliteOperator::singleInsertData(QString tableName,w2dba &singledb)
 {
     QSqlQuery sqlQuery;
-    QString insert = "INSERT INTO "+tableName+" VALUES (:name,:describe,:connection,0)";
+    QString insert = "INSERT INTO "+tableName+" VALUES (:name,:describe,:note,0)";
     sqlQuery.prepare(insert);
     sqlQuery.bindValue(":name", singledb.name);
     sqlQuery.bindValue(":describe", singledb.describe);
-    sqlQuery.bindValue(":connection", singledb.connection);
+    sqlQuery.bindValue(":note", singledb.note);
     if(!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to insert data. " << sqlQuery.lastError();
@@ -235,16 +234,16 @@ void SqliteOperator::moreInsertData(QString tableName,QList<w2dba>& moredb)
     QSqlQuery sqlQuery;
     QString insert = "INSERT INTO "+tableName+" VALUES(?,?,?,0)";
     sqlQuery.prepare(insert);
-    QVariantList nameList,describeList,connectionList;
+    QVariantList nameList,describeList,noteList;
     for(int i=0; i< moredb.size(); i++)
     {
         nameList << moredb.at(i).name;
         describeList << moredb.at(i).describe;
-        connectionList << moredb.at(i).connection;
+        noteList << moredb.at(i).note;
     }
     sqlQuery.addBindValue(nameList);
     sqlQuery.addBindValue(describeList);
-    sqlQuery.addBindValue(connectionList);
+    sqlQuery.addBindValue(noteList);
 
     if (!sqlQuery.execBatch()) // 进行批处理，如果出错就输出错误
     {
@@ -253,13 +252,14 @@ void SqliteOperator::moreInsertData(QString tableName,QList<w2dba>& moredb)
 }
 
 // 修改数据
-void SqliteOperator::modifyData(QString tableName,QString name, QString describe,QString connection)
+void SqliteOperator::modifyData(QString tableName,QString oldName,QString newName, QString describe,QString note)
 {
     QSqlQuery sqlQuery;
-    QString up = "update "+tableName+" set describe=?,connection=? where name='"+name+"'";
+    QString up = "update "+tableName+" set name=?,describe=?,connection=? where name='"+oldName+"'";
     sqlQuery.prepare(up);
+    sqlQuery.addBindValue(newName);
     sqlQuery.addBindValue(describe);
-    sqlQuery.addBindValue(connection);
+    sqlQuery.addBindValue(note);
     if(!sqlQuery.exec())
     {
         qDebug() <<"update failed:"<< sqlQuery.lastError();

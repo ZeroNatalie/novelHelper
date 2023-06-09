@@ -2,7 +2,7 @@
 #include "ui_addnewconnecion.h"
 #include "database.h"
 
-addNewConnecion::addNewConnecion(QString bn,QWidget *parent) :
+addNewConnectionWindow::addNewConnectionWindow(QString bn,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addNewConnecion),
     bookName(bn)
@@ -11,7 +11,7 @@ addNewConnecion::addNewConnecion(QString bn,QWidget *parent) :
     init();
     this->setWindowTitle("增加关系");
 }
-void addNewConnecion::init(){
+void addNewConnectionWindow::init(){
     ui->connectTypeBox->clear();
     ui->connectTypeBox->addItem("人物");
     ui->connectTypeBox->addItem("组织");
@@ -22,25 +22,25 @@ void addNewConnecion::init(){
     connect(ui->btnAddConnection,SIGNAL(clicked()),this,SLOT(newConnectionClicked()));
 }
 
-addNewConnecion::~addNewConnecion()
+addNewConnectionWindow::~addNewConnectionWindow()
 {
     delete ui;
 }
-void addNewConnecion::setSelectedType(QString t){
+void addNewConnectionWindow::setSelectedType(QString t){
     this->selectedType=t;
 }
-void addNewConnecion::setSelectedName(QString n){
+void addNewConnectionWindow::setSelectedName(QString n){
     this->selectedName=n;
     ui->selectedName->setText(n);
 }
 
-void addNewConnecion::connectNameChoose()
+void addNewConnectionWindow::connectNameChoose()
 {
     connectName = ui->connectNameBox->currentText();
 }
 
 
-void addNewConnecion::on_connectTypeBox_currentIndexChanged(int index)
+void addNewConnectionWindow::on_connectTypeBox_currentIndexChanged(int index)
 {
     ui->connectNameBox->clear();
     QString tableName;
@@ -65,11 +65,11 @@ void addNewConnecion::on_connectTypeBox_currentIndexChanged(int index)
     connectType = ui->connectTypeBox->currentText();
     connectName = ui->connectNameBox->currentText();
 }
-QString addNewConnecion::getConnectionNote(){
+QString addNewConnectionWindow::getConnectionNote(){
     return ui->connectionNote->text();
 }
 
-void addNewConnecion::newConnectionClicked(){
+void addNewConnectionWindow::newConnectionClicked(){
     SqliteOperator sql(bookName);
     sql.InsertConnection(selectedName,selectedType,connectName,connectType,getConnectionNote());
     this->close();
